@@ -15,6 +15,7 @@ body {
 
 .memory_game {
   display:flex;
+  flex-direction:row;
   flex-wrap:wrap;
   width:1200px;
   min-height:80vh;
@@ -28,6 +29,7 @@ body {
 }
 
 .btn {
+  justify-self:center;
   padding:8px 100px;
   cursor:pointer;
   margin:0 auto;
@@ -35,6 +37,19 @@ body {
   border: none;
   font-weight: 600;
   font-size:20px;
+  background-color:rgb(24, 24, 24);
+  color:#FFF;
+  &:hover {
+    cursor:grab;
+    opacity:0.9;
+  }
+}
+
+.reset_button {
+  cursor:pointer;
+  &:hover {
+    opacity:0.8;
+  }
 }
 
 .card {
@@ -61,8 +76,21 @@ body {
 }
 
 .footer {
-  height:100px;
-  border:1px solid;
+  display:flex;
+  align-self:end;
+  justify-content:space-evenly;
+  width:100%;
+  line-height:30px;
+  border-radius:7px;
+  background-color:rgb(24 24 24);
+  padding:10px 10px;
   font-size:30px;
-  color:rgb(88, 112, 86)
+  color:#FFF;
+}
+
+.number_container {
+  display:inline-block;
+  background-color:rgb(36, 49, 49);
+  padding: 0 10px;
+  border-radius:10px;
 }

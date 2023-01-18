@@ -1,6 +1,24 @@
-let cardArray:string[]= [], moveCount = 0, selectedCard: number, cardPairs = 3, clicked = 0, clickable = true, htmlCards:NodeListOf<HTMLDivElement>;
+let cardArray:string[]= [],
+    moveCount = 0,
+    selectedCard: number,
+    cardPairs = 3,
+    clicked = 0,
+    clickable = true,
+    htmlCards:NodeListOf<HTMLDivElement>,
+    wins = 0,
+    min = 0,
+    sec = 1,
+    timerInterval:NodeJS.Timeout;
 
-for (let i = 1; i <= cardPairs; i++) {
+const fullWidthDiv = document.createElement("div"),
+      movesCounter = document.querySelector(".moves_number_container--js"),
+      timeCounter = document.querySelector(".timer_number_container--js"),
+      winCounter = document.querySelector(".win_number_container--js"),
+      resetButton = document.querySelector(".reset_button--js"),
+      startButton = document.querySelector(".start-game--js"),
+      cardContainer = document.querySelector(".memory_game");
+
+for (let i = 1; i <= cardPairs; i++) { // Push in card values
     cardArray.push(i.toString());
     cardArray.push(i.toString());
 }
@@ -22,29 +40,61 @@ function shuffle (array: string[]) {
 }
 /* ------ End of shuffle array ------ */
 
-const startButton = document.querySelector<HTMLButtonElement>(".btn");
-const cardContainer = document.querySelector<HTMLDivElement>(".memory_game");
-const footerDiv = document.createElement("div");
+const timer = () => {
+    let timeGo = ():void => {
+        timeCounter.innerHTML = `${min<10?'0'+min:min} : ${sec<10?'0'+sec:sec}`
+        if (sec < 60) {
+            sec += 1;
+        } else if (sec === 60) {
+            min += 1;
+            sec = 0;
+        }
+        if (min === 59 && sec === 59) {
+            clearInterval(timerInterval)
+        }
+    }
+    timerInterval = setInterval(timeGo, 1000);
+}
 
 const startGame = () => {
     startButton.classList.add("hidden");
     shuffle(cardArray);
+    timer();
     moveCount = 0;
+    movesCounter.innerHTML = "0";
+    min = 0;
+    sec = 1;
+    timeCounter.innerHTML = "00 : 00";
      for (let i = 0; i < cardPairs*2; i++) {
-        const newDiv = document.createElement("div");
-        cardContainer.appendChild(newDiv).classList.add("card", "card--back");
+        const cardDiv = document.createElement("div");
+        cardContainer.appendChild(cardDiv).classList.add("card", "card--back");
         if (i === 2) {
-            const newDiv = document.createElement("div");
-            cardContainer.appendChild(newDiv).classList.add("full_width_line");
+            //const fullLineDiv = document.createElement("div");
+            cardContainer.appendChild(fullWidthDiv).classList.add("full_width_line");
         }
      }
-     cardContainer.appendChild(footerDiv).classList.add("full_width_line", "footer");
-     footerDiv.innerHTML = "Move count: " + moveCount
      htmlCards = document.querySelectorAll(".card");
      htmlCards.forEach((card, index) => handleCardClicks(card, index))
 }
 
-startButton.addEventListener("click", startGame)
+const reset = () => { // Reset game when reset button clicked
+    htmlCards.forEach(card => {
+        card.classList.remove("card--front");
+        card.classList.add("card--back");
+        card.innerHTML = '';
+    })
+    min = 0;
+    sec = 1;
+    timeCounter.innerHTML = "00 : 00";
+    movesCounter.innerHTML = "0";
+    moveCount = 0;
+    clicked = 0;
+    clickable = true;
+    shuffle(cardArray);
+}
+
+startButton.addEventListener("click", startGame); // call startGame() when start game button clicked
+resetButton.addEventListener("click", reset); // call reset() when reset button clicked
 
 const handleCardClicks = (card:Element, index:number) => {
     let cardClicked = () => {
@@ -58,7 +108,7 @@ const handleCardClicks = (card:Element, index:number) => {
                 clicked += 1;
             } else {
                 moveCount +=1
-                footerDiv.innerHTML = "Move count: " + moveCount
+                movesCounter.innerHTML = moveCount.toString();
                 let wait:number
                 clickable = false;
                 clicked = 0;
@@ -97,7 +147,10 @@ let checkIfWin = () => {
         htmlCards.forEach(card => {
             cardContainer.removeChild(card);
         })
-        footerDiv.innerHTML = "YOU WIN!"
+        wins += 1;
+        clearInterval(timerInterval)
+        winCounter.innerHTML = wins.toString();
+        cardContainer.removeChild(fullWidthDiv)
         startButton.classList.remove("hidden");
     }
 }
