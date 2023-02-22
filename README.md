@@ -1,10 +1,3 @@
-# html_ts_boilerplate
-To start coding open your terminal and write
-```
-npm i
-```
+# Simple memory game
 
-When all packages have been installed run:
-```
-npm start
-```
+Run `npm i` and `npm start`
